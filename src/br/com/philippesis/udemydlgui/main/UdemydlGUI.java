@@ -1,5 +1,6 @@
 package br.com.philippesis.udemydlgui.main;
 
+import br.com.philippesis.udemydlgui.utils.LinuxShell;
 import br.com.philippesis.udemydlgui.utils.Loading;
 import br.com.philippesis.udemydlgui.utils.Utils;
 
@@ -20,6 +21,8 @@ public class UdemydlGUI extends JFrame {
     private String path;
 
     private Loading loading;
+
+    private LinuxShell linuxShell;
 
     // Paths images.
     private static final String PATH_ICONS_TITLE_BAR = "/app_icons/title-bar/";
@@ -215,6 +218,11 @@ public class UdemydlGUI extends JFrame {
                 if(!utils.verifyLoading(loading)) {
                     loading = new Loading(UdemydlGUI.this);
                     loading.setVisible(true);
+                    linuxShell = new LinuxShell();
+                    if (linuxShell.commandoShell("ls")) {
+                        loading.dispose();
+                        loading = null;
+                    }
                 }
             }
         });

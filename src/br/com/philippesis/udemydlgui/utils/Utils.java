@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Objects;
 
 import static java.awt.Image.SCALE_SMOOTH;
@@ -15,11 +17,6 @@ public class Utils {
     private String path;
 
     private static final String PATH_UDEMY_DL = "/udemy-dl/";
-
-    public Utils() {
-
-
-    }
 
     public String getAppAssetsPath() {
 
@@ -42,9 +39,8 @@ public class Utils {
         return valueJOptionPane == 0;
     }
 
-    public boolean okConfirm(String msg, String title, int messageType, Component parent, String icon) {
+    public void okConfirm(String msg, String title, int messageType, Component parent, String icon) {
         JOptionPane.showMessageDialog(parent, msg, title, messageType, new ImageIcon(path + icon));
-        return true;
     }
 
     public Image getImage(String path, int width, int height) {
@@ -61,8 +57,8 @@ public class Utils {
     }
 
     public boolean verifyLoading(JFrame frame) {
-        // Verifique se um frame (no caso, foi criado para loading) esteja em execução.
         boolean statusFrame = false;
+        // Verifique se um frame (no caso, foi criado para loading) esteja em execução.
         if(frame != null) {
             try {
                 statusFrame = frame.getLocationOnScreen() != null;
@@ -74,6 +70,14 @@ public class Utils {
             catch (Exception er) { er.printStackTrace(); }
         }
         return statusFrame;
+    }
+
+    public String getDateHour() {
+        return new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss").format(Calendar.getInstance().getTime());
+    }
+
+    public String getDateHourForLog() {
+        return new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
     }
 
 }

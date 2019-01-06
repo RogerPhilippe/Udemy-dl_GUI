@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Udemy-dl_GUI:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Udemy_dl_GUI_jar</output-path>
+    <root id="archive" name="Udemy-dl_GUI.jar">
+      <element id="module-output" name="Udemy-dl_GUI" />
+    </root>
+  </artifact>
+</component>
