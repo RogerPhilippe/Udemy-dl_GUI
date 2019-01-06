@@ -1,5 +1,6 @@
 package br.com.philippesis.udemydlgui.main;
 
+import br.com.philippesis.udemydlgui.utils.Loading;
 import br.com.philippesis.udemydlgui.utils.Utils;
 
 import javax.swing.*;
@@ -12,26 +13,37 @@ public class UdemydlGUI extends JFrame {
 
     private Point mouseDownCompCoords = null;
 
-    private JFileChooser fc;
+    //private JFileChooser fc;
 
     private Utils utils;
 
     private String path;
 
+    private Loading loading;
+
+    // Paths images.
+    private static final String PATH_ICONS_TITLE_BAR = "/app_icons/title-bar/";
+    private static final String PATH_ICONS_MAIN_MENU = "/app_icons/main-menu/";
+    private static final String PATH_ICONS_APP = "/app_icons/app/";
+    //private static final String PATH_ICONS_CONTENT = "/app_icons/content/";
+    //String PATH_ICONS_CONTEXT_MENU = "/app_icons/context-menu/";
+
     private UdemydlGUI() {
         utils = new Utils();
         path = utils.getAppAssetsPath();
         initComps();
+
     }
 
     private void initComps() {
 
-        // Paths images
-        String PATH_ICONS_TITLE_BAR = "/app_icons/title-bar/";
-        String PATH_ICONS_MAIN_MENU = "/app_icons/main-menu/";
-        String PATH_ICONS_CONTENT = "/app_icons/content/";
-        String PATH_ICONS_APP = "/app_icons/app/";
-        //String PATH_ICONS_CONTEXT_MENU = "/app_icons/context-menu/";
+        // Verifica se aplicação udemy-dl.py está presente, caso não, fecha aplicação.
+        if(!utils.verifyUdemydlOnBoard()){
+            utils.okConfirm("Erro fatal. Não foram encontrados arquivos importantes.\nErr-app01 - Udemy-dl",
+                    "ERRO", JOptionPane.ERROR_MESSAGE, UdemydlGUI.this,
+                    PATH_ICONS_APP + "icons8-siren-32.png");
+            System.exit(1);
+        }
 
         // Main frame
         setSize(430, 340);
@@ -117,10 +129,13 @@ public class UdemydlGUI extends JFrame {
                 // System.out.println("Location: " + e.getLocationOnScreen());
             }
         });
+        // Panel onde funcionará o mouseDrag
         pnlTitleBar.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
-                Point currCoords = e.getLocationOnScreen();
-                setLocation(currCoords.x - mouseDownCompCoords.x, currCoords.y - mouseDownCompCoords.y);
+                if(!utils.verifyLoading(loading)) {
+                    Point currCoords = e.getLocationOnScreen();
+                    setLocation(currCoords.x - mouseDownCompCoords.x, currCoords.y - mouseDownCompCoords.y);
+                }
             }
         });
         //Fim mouse drag
@@ -128,7 +143,11 @@ public class UdemydlGUI extends JFrame {
         closeIcon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                exitApp();
+                // Verifica se loading está rodando
+                if(!utils.verifyLoading(loading)) {
+                    // Chama método para fechar aplicação
+                    exitApp();
+                }
             }
         });
         // Mouse entered event icon close
@@ -142,8 +161,11 @@ public class UdemydlGUI extends JFrame {
         minimizeIcon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                // Minimizar aplicação
-                setState(Frame.ICONIFIED);
+                // Verifica se loading está rodando
+                if(!utils.verifyLoading(loading)) {
+                    // Minimizar aplicação
+                    setState(Frame.ICONIFIED);
+                }
             }
         });
         // Mouse entered event icon minimize
@@ -153,14 +175,82 @@ public class UdemydlGUI extends JFrame {
                 minimizeIcon.setToolTipText("Minimizar");
             }
         });
-
+        // Mouse click release event btn new
+        newIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // Verifica se loading não está rodando
+//                if(!utils.verifyLoading(loading)) {
+//
+//                }
+            }
+        });
+        // Mouse entered event btn new
+        newIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                newIcon.setToolTipText("Novo Esquema de Downloads");
+            }
+        });
+        // Mouse click release event btn open
+        // Mouse entered event btn open
+        openIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                openIcon.setToolTipText("Abrir Esquema de Downloads");
+            }
+        });
+        // Mouse click release event btn save
+        // Mouse entered event btn save
+        saveIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                saveIcon.setToolTipText("Salvar Esquema de Downloads");
+            }
+        });
+        // Mouse click release event btn downloads
+        downloadsIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if(!utils.verifyLoading(loading)) {
+                    loading = new Loading(UdemydlGUI.this);
+                    loading.setVisible(true);
+                }
+            }
+        });
+        // Mouse entered event btn downloads
+        downloadsIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                downloadsIcon.setToolTipText("Iniciar Downloads");
+            }
+        });
+        // Mouse click release event btn about
+        // Mouse entered event btn about
+        aboutIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                aboutIcon.setToolTipText("Sobre Aplicação");
+            }
+        });
+        // Mouse click release event btn exit
+        // Mouse entered event btn exit
+        exitIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                exitIcon.setToolTipText("Fechar a Aplicação");
+            }
+        });
     }
 
     private void exitApp() {
         Object[] options = { "SIM", "NÃO" };
         if(utils.yesNoConfirm(options, "Deseja Realmente Sair?", "Sair da aplicação",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.CANCEL_OPTION, UdemydlGUI.this,
-                "/app_icons/app/icons8-siren-32.png")) dispose();
+                PATH_ICONS_APP + "icons8-siren-32.png")) {
+            //loading.dispose();
+            System.exit(0);
+        }
     }
 
     public static void main(String[] args) {

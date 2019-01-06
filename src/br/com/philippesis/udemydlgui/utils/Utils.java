@@ -14,7 +14,10 @@ public class Utils {
 
     private String path;
 
+    private static final String PATH_UDEMY_DL = "/udemy-dl/";
+
     public Utils() {
+
 
     }
 
@@ -35,8 +38,13 @@ public class Utils {
                                 Component parent, String icon) {
         path = getAppAssetsPath();
         int valueJOptionPane = JOptionPane.showOptionDialog(parent, msg, title, optionType, messageType,
-                new ImageIcon(path+icon), options, options[0]);
+                new ImageIcon(path + icon), options, options[0]);
         return valueJOptionPane == 0;
+    }
+
+    public boolean okConfirm(String msg, String title, int messageType, Component parent, String icon) {
+        JOptionPane.showMessageDialog(parent, msg, title, messageType, new ImageIcon(path + icon));
+        return true;
     }
 
     public Image getImage(String path, int width, int height) {
@@ -45,6 +53,27 @@ public class Utils {
             img = ImageIO.read(new File(path));
         } catch (Exception er) { er.printStackTrace(); }
         return Objects.requireNonNull(img).getScaledInstance(width, height, SCALE_SMOOTH);
+    }
+
+    public boolean verifyUdemydlOnBoard(){
+        File udemy_dl_py = new File(path + PATH_UDEMY_DL + "udemy-dl.py");
+        return udemy_dl_py.exists();
+    }
+
+    public boolean verifyLoading(JFrame frame) {
+        // Verifique se um frame (no caso, foi criado para loading) esteja em execução.
+        boolean statusFrame = false;
+        if(frame != null) {
+            try {
+                statusFrame = frame.getLocationOnScreen() != null;
+            }
+            // A exception IllegalCompo... só ocorrerá uma única vez, poís será gerada caso frame não seja null,
+            //  mas não esteja mais executando. Nesse caso, itemos destruir o frame.
+            catch (IllegalComponentStateException er) { frame.dispose(); }
+            // Exception qualquer.
+            catch (Exception er) { er.printStackTrace(); }
+        }
+        return statusFrame;
     }
 
 }
